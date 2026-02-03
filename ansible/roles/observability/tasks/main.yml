@@ -1,0 +1,34 @@
+---
+-  name:  Install  CloudWatch agent  (Amazon  Linux  2)
+   ansible.builtin.yum:
+       name:  amazon-cloudwatch-agent
+       state:  present
+
+-  name:  Configure  CloudWatch  agent
+   ansible.builtin.copy:
+       dest:  /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+       content:  |
+          {
+              "logs":  {
+                  "logs_collected":  {
+                     "files":  {
+                         "collect_list":  [
+                            {
+                                 "file_path": "/var/log/messages",
+                                 "log_group_name": "/bastion/messages",
+                                 "log_stream_name": "{instance_id}"
+                             }
+                         ]
+                     }
+                  }
+              }
+           }
+       owner:  root
+       group:  root
+       mode: "0644"
+
+-  name:  Start CloudWatch  agent
+    ansible.builtin.service:
+       name: amazon-cloudwatch-agent
+       state:  started
+       enabled:  yes
