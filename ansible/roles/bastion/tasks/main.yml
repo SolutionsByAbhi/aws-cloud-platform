@@ -1,0 +1,49 @@
+---
+-  name:  Ensure  fail2ban  is installed
+    ansible.builtin.package:
+       name:  fail2ban
+       state: present
+
+-  name:  Harden SSH  configuration
+    ansible.builtin.lineinfile:
+       path: /etc/ssh/sshd_config
+       regexp:  "{{  item.regexp  }}"
+       line:  "{{ item.line  }}"
+       state:  present
+       backup:  yes
+   loop:
+       -  {  regexp:  '^PermitRootLogin', line:  'PermitRootLogin  no'  }
+       -  { regexp:  '^PasswordAuthentication',  line:  'PasswordAuthentication  no' }
+    notify:  Restart sshd
+
+-  name:  Ensure amazon-ssm-agent  is  enabled
+   ansible.builtin.service:
+       name:  amazon-ssm-agent
+       state:  started
+       enabled:  yes
+
+-  name:  Ensure  auditd  is installed
+    ansible.builtin.package:
+       name:  audit
+       state: present
+
+-  name:  Ensure auditd  is  running
+   ansible.builtin.service:
+       name:  auditd
+       state:  started
+       enabled:  yes
+
+-  name:  Configure  basic  MOTD
+   ansible.builtin.copy:
+       dest:  /etc/motd
+       content:  |
+          Bastion  host  -  all activity  is  monitored.
+       owner:  root
+       group:  root
+       mode: "0644"
+
+-  name:  Restart sshd
+    ansible.builtin.service:
+       name:  sshd
+       state: restarted
+    listen:  Restart sshd
