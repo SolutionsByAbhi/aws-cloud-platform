@@ -1,0 +1,32 @@
+---
+-  name:  Register  current  ECS task  definition
+    amazon.aws.ecs_taskdefinition_info:
+       task_definition: "{{  ecs_task_family  }}"
+   register:  current_td
+
+-  name: Create  new  task  definition  revision with  updated  image
+   amazon.aws.ecs_taskdefinition:
+       family:  "{{  ecs_task_family  }}"
+       network_mode:  "{{ current_td.task_definition.networkMode  }}"
+       cpu:  "{{  current_td.task_definition.cpu  }}"
+       memory: "{{  current_td.task_definition.memory  }}"
+       requires_compatibilities:  "{{  current_td.task_definition.requiresCompatibilities }}"
+       execution_role_arn:  "{{  current_td.task_definition.executionRoleArn  }}"
+       task_role_arn:  "{{ current_td.task_definition.taskRoleArn  }}"
+       containers:
+           -  name: "{{  ecs_container_name  }}"
+              image:  "{{  new_image  }}"
+              essential:  true
+              portMappings:  "{{ current_td.task_definition.containerDefinitions[0].portMappings  }}"
+              logConfiguration:  "{{  current_td.task_definition.containerDefinitions[0].logConfiguration  }}"
+   register:  new_td
+
+- name:  Update  ECS  service  to use  new  task  definition
+   amazon.aws.ecs_service:
+       name:  "{{  ecs_service_name  }}"
+       cluster: "{{  ecs_cluster_name  }}"
+       task_definition:  "{{  new_td.task_definition.taskDefinitionArn }}"
+       desired_count:  "{{  desired_count  |  default(2) }}"
+       deployment_configuration:
+           minimumHealthyPercent:  50
+          maximumPercent:  200
