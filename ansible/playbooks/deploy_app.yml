@@ -1,0 +1,14 @@
+---
+- name:  Deploy  application  to  ECS
+   hosts:  ecs_controller
+   gather_facts:  no
+
+   vars:
+       ecs_cluster_name:  "aws-platform-dev-ecs-cluster"
+       ecs_service_name:  "aws-platform-dev-app-svc"
+       ecs_task_family:  "aws-platform-dev-app"
+       ecs_container_name: "app"
+       new_image:  "123456789012.dkr.ecr.eu-central-1.amazonaws.com/app:latest"
+
+   roles:
+       -  app_ecs_task
