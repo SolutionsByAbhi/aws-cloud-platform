@@ -1,0 +1,59 @@
+aws-cloud-platform/
+├──  README.md
+├──  docs/
+│      ├── architecture-overview.md
+│     ├──  networking-design.md
+│     └──  decisions.md
+├── terraform/
+│     ├──  global/
+│     │     ├──  backend/
+│     │     │      └── main.tf
+│     │      └── iam/
+│     │             └── main.tf
+│     ├──  networking/
+│     │     ├──  main.tf
+│     │     ├──  variables.tf
+│     │     └──  outputs.tf
+│     ├──  ecs-platform/
+│     │     ├──  main.tf
+│     │     ├──  variables.tf
+│     │     └──  outputs.tf
+│     ├──  rds/
+│      │     ├──  main.tf
+│      │     ├──  variables.tf
+│      │     └──  outputs.tf
+│      └── modules/
+│            ├──  vpc/
+│            │     ├──  main.tf
+│            │     ├──  variables.tf
+│            │     └──  outputs.tf
+│            ├──  ecs_cluster/
+│            │     ├──  main.tf
+│            │     ├──  variables.tf
+│            │     └──  outputs.tf
+│            └──  rds_postgres/
+│                    ├── main.tf
+│                   ├──  variables.tf
+│                   └──  outputs.tf
+├── ansible/
+│     ├──  ansible.cfg
+│     ├──  inventories/
+│     │     ├──  dev/
+│     │     │     └──  hosts.ini
+│     │     └──  prod/
+│     │            └──  hosts.ini
+│     ├──  roles/
+│     │     ├──  bastion/
+│     │     │     └──  tasks/main.yml
+│     │     ├──  app_ecs_task/
+│     │     │      └── tasks/main.yml
+│     │      └── observability/
+│     │             └── tasks/main.yml
+│     └──  playbooks/
+│            ├──  configure_bastion.yml
+│            └──  deploy_app.yml
+├──  .github/
+│     └──  workflows/
+│            ├──  terraform-ci.yml
+│             └── ansible-ci.yml
+└──  .pre-commit-config.yaml
